@@ -1,11 +1,12 @@
-# babel-plugin-react-display-name
+# babel-plugin-react-isplay-name
 
-Add displayName to React.createClass calls
+Adds vendor prefixes to inline styles in React elements through
+[autoprefix](https://github.com/uxtemple/autoprefix).
 
 ## Installation
 
 ```sh
-$ npm install babel-plugin-react-display-name
+$ npm install babel-plugin-react-autoprefix
 ```
 
 ## Usage
@@ -16,20 +17,20 @@ $ npm install babel-plugin-react-display-name
 
 ```json
 {
-  "plugins": ["react-display-name"]
+  "plugins": ["react-autoprefix"]
 }
 ```
 
 ### Via CLI
 
 ```sh
-$ babel --plugins react-display-name script.js
+$ babel --plugins react-autoprefix script.js
 ```
 
 ### Via Node API
 
 ```javascript
 require("babel-core").transform("code", {
-  plugins: ["react-display-name"]
+  plugins: ["react-autoprefix"]
 });
 ```
