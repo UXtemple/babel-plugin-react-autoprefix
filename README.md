@@ -34,3 +34,7 @@ require("babel-core").transform("code", {
   plugins: ["react-autoprefix"]
 });
 ```
+
+# TODO
+
+- Work when styles are extracted into variables.
