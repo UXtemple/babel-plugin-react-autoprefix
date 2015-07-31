@@ -8,10 +8,26 @@ function isString(value) {
   return typeof value === 'string'
 }
 
-function propertiesToObject(properties) {
-  return Object.keys(properties)
-    .map(k => ({key: properties[k].key.name, value: properties[k].value.value}))
-    .reduce((p, {key, value}) => ({...p, [key]: value}), {});
+function propertiesToObject(t, props) {
+  const keyedProps = {};
+
+  props.forEach(function (prop) {
+    // turn the key into a literal form
+    const key = prop.toComputedKey();
+    if (!t.isLiteral(key)) return; // probably computed
+
+    // ensure that the value is a string
+    const value = prop.get('value');
+    if (!value.isLiteral()) return;
+
+    // register property as one we'll try and autoprefix
+    keyedProps[key.value] = value.node.value;
+
+    // remove property as it'll get added later again later
+    prop.dangerouslyRemove();
+  });
+
+  return keyedProps;
 }
 
 export default function ({ Plugin, types: t }) {
@@ -19,12 +35,27 @@ export default function ({ Plugin, types: t }) {
     return  isString(value) ? t.literal(value) : t.arrayExpression(value.map(t.literal));
   }
 
-  function prefixStyle(node) {
-    const prefixed = autoprefix(propertiesToObject(node.expression.properties));
+  function prefixStyle(path) {
+    // verify this is an object as it's the only type we take
+    if (!path.isObjectExpression()) return;
 
-    return t.objectExpression(
-      Object.keys(prefixed).map(k => t.property('init', t.identifier(k), getValue(prefixed[k])))
-    );
+    // we've already prefixed this object
+    if (path.getData('_autoprefixed')) return;
+
+    // track that we've autoprefixed this so we don't do it multiple times
+    path.setData('_autoprefixed', true);
+
+    // get an object containing all the properties in this that are prefixed
+    const prefixed = autoprefix(propertiesToObject(t, path.get('properties')));
+
+    for (var key in prefixed) {
+      // push new prefixed properties
+      path.pushContainer('properties', t.property(
+        'init',
+        t.literal(key),
+        t.valueToNode(prefixed[key]))
+      );
+    }
   }
 
   return new Plugin('react-prefix-styles', {
@@ -35,7 +66,7 @@ export default function ({ Plugin, types: t }) {
     visitor: {
       JSXAttribute(node) {
         if (isStyle(node)) {
-          node.value = prefixStyle(node.value);
+          prefixStyle(this.get('value.expression').resolve());
         }
       }
     }
