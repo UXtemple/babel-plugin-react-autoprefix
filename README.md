@@ -37,4 +37,4 @@ require("babel-core").transform("code", {
 
 # TODO
 
-- Work when styles are extracted into variables.
+- Tests.
