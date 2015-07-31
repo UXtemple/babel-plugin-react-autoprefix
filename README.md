@@ -1,4 +1,4 @@
-# babel-plugin-react-isplay-name
+# babel-plugin-react-autoprefix
 
 Adds vendor prefixes to inline styles in React elements through
 [autoprefix](https://github.com/uxtemple/autoprefix).
