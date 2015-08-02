@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+find . -name '*.js' -type f -not -path './node_modules/*' -not -path '.bin/*' -exec rm {} \; -print

@@ -49,11 +49,14 @@ export default function ({ Plugin, types: t }) {
     const prefixed = autoprefix(propertiesToObject(t, path.get('properties')));
 
     for (var key in prefixed) {
+      // make sure the prefixed value produces valid CSS at all times.
+      const prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(`;${key}:`) : prefixed[key];
+
       // push new prefixed properties
       path.pushContainer('properties', t.property(
         'init',
         t.literal(key),
-        t.valueToNode(prefixed[key]))
+        t.valueToNode(prefixedValue))
       );
     }
   }

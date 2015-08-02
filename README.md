@@ -3,6 +3,8 @@
 Adds vendor prefixes to inline styles in React elements through
 [autoprefix](https://github.com/uxtemple/autoprefix).
 
+[![Build Status](https://travis-ci.org/UXtemple/babel-plugin-react-autoprefix.svg)](https://travis-ci.org/UXtemple/babel-plugin-react-autoprefix)
+
 ## Installation
 
 ```sh

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+IGNORE='node_modules/**,__tests__/**';
+
+./node_modules/.bin/babel $1 --extensions .es6 --ignore $IGNORE --out-dir . .
