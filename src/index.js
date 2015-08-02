@@ -58,7 +58,7 @@ export default function ({ Plugin, types: t }) {
     }
   }
 
-  return new Plugin('react-prefix-styles', {
+  return new Plugin('react-autoprefix', {
     metadata: {
       group: 'builtin-pre'
     },
