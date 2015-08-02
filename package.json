@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-react-autoprefix",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Adds vendor prefixes to inline styles in React elements",
   "repository": "UXtemple/babel-plugin-react-prefix-styles",
   "license": "MIT",
