@@ -29,6 +29,13 @@ const EXPECT = [
   '"width": "100"'
 ];
 
+const CODE_STRING = '<div style="anything" />';
+test(CODE_STRING, t => {
+  const code = getCode(CODE_STRING);
+  t.ok(code.indexOf('style: "anything"') !== -1);
+  t.end();
+});
+
 CODE.forEach(src => {
   test(src, t => {
     const code = getCode(src);
