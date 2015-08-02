@@ -53,7 +53,9 @@ export default function ({ Plugin, types: t }) {
       path.pushContainer('properties', t.property(
         'init',
         t.literal(key),
-        t.valueToNode(prefixed[key]))
+        Array.isArray(prefixed[key])
+          ? t.valueToNode(prefixed[key].join(`;${key}:`))
+          : t.valueToNode(prefixed[key]))
       );
     }
   }
