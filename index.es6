@@ -17,7 +17,7 @@ function propertiesToObject(t, props) {
     if (!t.isLiteral(key)) return; // probably computed
 
     // ensure that the value is a string
-    const value = prop.get('value');
+    const value = prop.get('value').resolve();
     if (!value.isLiteral()) return;
 
     // register property as one we'll try and autoprefix

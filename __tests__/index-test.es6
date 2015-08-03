@@ -9,12 +9,12 @@ const CODE = [
   ` const style={alignItems: "center", display: "flex", width: 100};
     <div style={style} />`,
 
-  // // object shorthand
-  // ` const display = "flex";
-  //   const style={alignItems: "center", display, width: 100};
-  //   <div style={style} />`,
+  // object shorthand
+  ` const display = "flex";
+    const style={alignItems: "center", display, width: 100};
+    <div style={style} />`,
 
-  // object spread
+  // // object spread
   // ` const style={alignItems: "center", display: "flex"};
   //   const finalStyle={...style, width: 100};
   //   <div style={finalStyle} />`,
