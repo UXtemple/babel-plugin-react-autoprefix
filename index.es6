@@ -81,7 +81,7 @@ export default function ({ Plugin, types: t }) {
     visitor: {
       JSXAttribute(node) {
         if (isStyle(node)) {
-          prefixStyle(this.get('value.expression').resolve());
+          prefixStyle(this.get('value.expression').resolve(true));
         }
       }
     }

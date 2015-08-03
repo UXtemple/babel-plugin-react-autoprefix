@@ -9,6 +9,10 @@ const CODE = [
   `const style={alignItems: "center", display: "flex", width: 100};
   <div style={style} />`,
 
+  // variable outside, key in object
+  `const style={stuff: {alignItems: "center", display: "flex", width: 100}};
+  <div style={style.stuff} />`,
+
   // object shorthand
   `const display = "flex";
   const style={alignItems: "center", display, width: 100};
