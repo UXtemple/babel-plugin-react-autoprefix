@@ -8,6 +8,8 @@ function propertiesToObject(t, props) {
   const keyedProps = {};
 
   function handleSpreadProperty(node) {
+    if (typeof node.properties === 'undefined') return;
+
     node.properties.forEach(sprop => {
       if (t.isSpreadProperty(sprop)) {
         throw new Error('TODO: handle spread properties in spread properties');
