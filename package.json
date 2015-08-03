@@ -7,7 +7,6 @@
   "main": "index.js",
   "devDependencies": {
     "babel": "^5.8.20",
-    "tap-dot": "^1.0.0",
     "tape": "^4.0.1"
   },
   "scripts": {

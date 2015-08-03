@@ -1,27 +1,37 @@
 import autoprefix from 'autoprefix';
 
-function isStyle(node) {
-  return node.name.name === 'style';
-}
-
-function isString(value) {
-  return typeof value === 'string'
-}
+const isFunction = value => typeof value === 'function';
+const isString = value => typeof value === 'string';
+const isStyle = node => node.name.name === 'style';
 
 function propertiesToObject(t, props) {
   const keyedProps = {};
 
-  props.forEach(function (prop) {
-    // turn the key into a literal form
-    const key = prop.toComputedKey();
-    if (!t.isLiteral(key)) return; // probably computed
+  function handleSpreadProperty(node) {
+    node.properties.forEach(sprop => {
+      if (t.isSpreadProperty(sprop)) {
+        throw new Error('TODO: handle spread properties in spread properties');
+      }
 
-    // ensure that the value is a string
-    const value = prop.get('value').resolve();
-    if (!value.isLiteral()) return;
+      keyedProps[sprop.key.name] = sprop.value.value;
+    });
+  }
 
-    // register property as one we'll try and autoprefix
-    keyedProps[key.value] = value.node.value;
+  props.forEach(prop => {
+    if (t.isSpreadProperty(prop)) {
+      handleSpreadProperty(prop.get('argument').resolve().node);
+    } else {
+      // turn the key into a literal form
+      const key = prop.toComputedKey();
+      if (!t.isLiteral(key)) return; // probably computed
+
+      // ensure that the value is a string
+      const value = prop.get('value').resolve();
+      if (!value.isLiteral()) return;
+
+      // register property as one we'll try and autoprefix
+      keyedProps[key.value] = value.node.value;
+    }
 
     // remove property as it'll get added later again later
     prop.dangerouslyRemove();
@@ -32,7 +42,7 @@ function propertiesToObject(t, props) {
 
 export default function ({ Plugin, types: t }) {
   function getValue(value) {
-    return  isString(value) ? t.literal(value) : t.arrayExpression(value.map(t.literal));
+    return isString(value) ? t.literal(value) : t.arrayExpression(value.map(t.literal));
   }
 
   function prefixStyle(path) {

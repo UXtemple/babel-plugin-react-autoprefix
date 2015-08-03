@@ -39,4 +39,4 @@ require("babel-core").transform("code", {
 
 # TODO
 
-- Tests.
+- Refactor how we deal with `SpreadProperty` nodes.

@@ -6,19 +6,24 @@ const CODE = [
   '<div style={{alignItems: "center", display: "flex", width: 100}} />',
 
   // variable outside
-  ` const style={alignItems: "center", display: "flex", width: 100};
-    <div style={style} />`,
+  `const style={alignItems: "center", display: "flex", width: 100};
+  <div style={style} />`,
 
   // object shorthand
-  ` const display = "flex";
-    const style={alignItems: "center", display, width: 100};
-    <div style={style} />`,
+  `const display = "flex";
+  const style={alignItems: "center", display, width: 100};
+  <div style={style} />`,
 
-  // // object spread
-  // ` const style={alignItems: "center", display: "flex"};
-  //   const finalStyle={...style, width: 100};
-  //   <div style={finalStyle} />`,
+  // object spread
+  `const style={alignItems: "center", display: "flex"};
+  const finalStyle={...style, width: 100};
+  <div style={finalStyle} />`
 
+  // // more advanced object spread
+  // ` const style={alignItems: "center"};
+  //   const midStyle={...style, display: "flex"};
+  //   const finalStyle={...midStyle, width: 100};
+  //   <div style={finalStyle} />`
 ];
 const EXPECT = [
   '"webkitBoxAlign": "center"',
