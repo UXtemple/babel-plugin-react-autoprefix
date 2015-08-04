@@ -52,3 +52,10 @@ CODE.forEach(src => {
     t.end();
   })
 });
+
+const CODE_EXP = 'const val = 10; <div style={{transform: "translateX(" + val + ")" }} />';
+test(CODE_EXP, t => {
+  const code = getCode(CODE_EXP);
+  t.ok(code.indexOf('transform: "translateX(10)"') !== -1);
+  t.end();
+});
