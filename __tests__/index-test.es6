@@ -45,6 +45,14 @@ test(CODE_STRING, t => {
   t.end();
 });
 
+const CODE_EXP = 'const val = 10; <div style={{transform: "translateX(" + val + ")" }} />';
+test(CODE_EXP, t => {
+  const code = getCode(CODE_EXP);
+  console.log('got', code);
+  t.ok(code.indexOf('"WebkitTransform": "translateX(" + val + ")"') !== -1);
+  t.end();
+});
+
 CODE.forEach(src => {
   test(src, t => {
     const code = getCode(src);
