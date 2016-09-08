@@ -1,9 +1,5 @@
 import autoprefix from 'autoprefix';
 
-const isFunction = value => typeof value === 'function';
-const isString = value => typeof value === 'string';
-const isStyle = node => node.name.name === 'style';
-
 function propertiesToObject(t, props) {
   const keyedProps = {};
 
@@ -21,69 +17,63 @@ function propertiesToObject(t, props) {
 
   props.forEach(prop => {
     if (t.isSpreadProperty(prop)) {
-      handleSpreadProperty(prop.get('argument').resolve().node);
+      handleSpreadProperty(prop.argument.node);
     } else {
-      // turn the key into a literal form
-      const key = prop.toComputedKey();
-      if (!t.isLiteral(key)) return; // probably computed
+      // we don't process computed properties
+      if (prop.computed) return;
 
       // ensure that the value is a string
-      const value = prop.get('value').resolve();
-      if (!value.isLiteral()) return;
+      if (!t.isLiteral(prop.value)) return;
 
       // register property as one we'll try and autoprefix
-      keyedProps[key.value] = value.node.value;
+      keyedProps[prop.key.name] = prop.value.value;
     }
 
-    // remove property as it'll get added later again later
-    prop.dangerouslyRemove();
+    // // remove property as it'll get added later again later
+    // prop.dangerouslyRemove();
   });
 
   return keyedProps;
 }
 
-export default function ({ Plugin, types: t }) {
-  function getValue(value) {
-    return isString(value) ? t.literal(value) : t.arrayExpression(value.map(t.literal));
+function prefixStyle(t, path) {
+  console.log(path.node.value)
+  // verify this is an object as it's the only type we take
+  if (!t.isJSXExpressionContainer(path.node.value)) return;
+
+  // console.log('props', path.node.properties)
+
+  // we've already prefixed this object
+  if (path.data.autoprefixed) return;
+
+  // track that we've autoprefixed this so we don't do it multiple times
+  path.data.autoprefixed = true;
+
+  const { properties } = path.node.value.expression;
+  // get an object containing all the properties in this that are prefixed
+  const prefixed = autoprefix(propertiesToObject(t, properties));
+
+  for (var key in prefixed) {
+    // make sure the prefixed value produces valid CSS at all times.
+    const prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(`;${key}:`) : prefixed[key];
+
+    if (has)
+    // push new prefixed properties
+    path.node.value.expression.properties.push(
+      t.objectProperty(
+        t.stringLiteral(key),
+        t.valueToNode(prefixedValue)
+      )
+    );
   }
+}
 
-  function prefixStyle(path) {
-    // verify this is an object as it's the only type we take
-    if (!path.isObjectExpression()) return;
-
-    // we've already prefixed this object
-    if (path.getData('_autoprefixed')) return;
-
-    // track that we've autoprefixed this so we don't do it multiple times
-    path.setData('_autoprefixed', true);
-
-    // get an object containing all the properties in this that are prefixed
-    const prefixed = autoprefix(propertiesToObject(t, path.get('properties')));
-
-    for (var key in prefixed) {
-      // make sure the prefixed value produces valid CSS at all times.
-      const prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(`;${key}:`) : prefixed[key];
-
-      // push new prefixed properties
-      path.pushContainer('properties', t.property(
-        'init',
-        t.literal(key),
-        t.valueToNode(prefixedValue))
-      );
-    }
-  }
-
-  return new Plugin('react-autoprefix', {
-    metadata: {
-      group: 'builtin-pre'
-    },
-
-    visitor: {
-      JSXAttribute(node) {
-        if (isStyle(node)) {
-          prefixStyle(this.get('value.expression').resolve(true));
-        }
+export default ({ types }) => ({
+  visitor: {
+    JSXAttribute(path) {
+      if (path.node.name.name === 'style') {
+        prefixStyle(types, path);
       }
     }
-  });
-}
+  }
+});

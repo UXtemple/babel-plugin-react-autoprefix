@@ -1,33 +1,35 @@
 import getCode from './get-code';
 import test from 'tape';
 
-const CODE = [
-  // inline style
-  '<div style={{alignItems: "center", display: "flex", width: 100}} />',
+const CODE = [{
+  name: 'inline style',
+  src: '<div style={{alignItems: "center", display: "flex", width: 100}} />',
+  out: `React.createElement("div",{style:{alignItems:"center",display:"-webkit-box;-ms-flexbox;flex",width:100,WebkitBoxAlign:"center",msFlexAlign:"center"}});`
+}
 
-  // variable outside
-  `const style={alignItems: "center", display: "flex", width: 100};
-  <div style={style} />`,
+  // // variable outside
+  // `const style={alignItems: "center", display: "flex", width: 100};
+  // <div style={style} />`,
 
-  // variable outside, key in object
-  `const style={stuff: {alignItems: "center", display: "flex", width: 100}};
-  <div style={style.stuff} />`,
+  // // variable outside, key in object
+  // `const style={stuff: {alignItems: "center", display: "flex", width: 100}};
+  // <div style={style.stuff} />`,
 
-  // object shorthand
-  `const display = "flex";
-  const style={alignItems: "center", display, width: 100};
-  <div style={style} />`,
+  // // object shorthand
+  // `const display = "flex";
+  // const style={alignItems: "center", display, width: 100};
+  // <div style={style} />`,
 
-  // object spread
-  `const style={alignItems: "center", display: "flex"};
-  const finalStyle={...style, width: 100};
-  <div style={finalStyle} />`
+  // // object spread
+  // `const style={alignItems: "center", display: "flex"};
+  // const finalStyle={...style, width: 100};
+  // <div style={finalStyle} />`
 
-  // // more advanced object spread
-  // ` const style={alignItems: "center"};
-  //   const midStyle={...style, display: "flex"};
-  //   const finalStyle={...midStyle, width: 100};
-  //   <div style={finalStyle} />`
+  // // // more advanced object spread
+  // // ` const style={alignItems: "center"};
+  // //   const midStyle={...style, display: "flex"};
+  // //   const finalStyle={...midStyle, width: 100};
+  // //   <div style={finalStyle} />`
 ];
 const EXPECT = [
   '"webkitBoxAlign": "center"',
@@ -45,10 +47,10 @@ test(CODE_STRING, t => {
   t.end();
 });
 
-CODE.forEach(src => {
-  test(src, t => {
-    const code = getCode(src);
-    t.ok(EXPECT.map(text => code.indexOf(text) !== -1).reduce((p,c) => p && c, true));
+CODE.forEach(code => {
+  test(`${code.name}: ${code.src}`, t => {
+    const transformed = getCode(code.src);
+    t.equals(transformed, code.out);
     t.end();
   })
 });

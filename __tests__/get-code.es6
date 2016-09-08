@@ -1,8 +1,14 @@
-import { transform } from 'babel';
+import { transform } from 'babel-core';
+import autoprefix from '../index';
 
 export default function getCode(code) {
   return transform(code, {
-    plugins: ['react-autoprefix'],
-    stage: 0
+    compact: true,
+    plugins: [
+      autoprefix
+    ],
+    presets: [
+      'react'
+    ]
   }).code;
 }
