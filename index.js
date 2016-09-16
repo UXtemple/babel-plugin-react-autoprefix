@@ -1,12 +1,22 @@
-import autoprefix from 'autoprefix';
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _autoprefix = require('autoprefix');
+
+var _autoprefix2 = _interopRequireDefault(_autoprefix);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function propertiesToObject(t, props) {
-  const keyedProps = {};
+  var keyedProps = {};
 
   function handleSpreadProperty(node) {
     if (!node || !node.properties) return;
 
-    node.properties.forEach(sprop => {
+    node.properties.forEach(function (sprop) {
       if (t.isSpreadProperty(sprop)) {
         throw new Error('TODO: handle spread properties in spread properties');
       }
@@ -15,7 +25,7 @@ function propertiesToObject(t, props) {
     });
   }
 
-  props.forEach(prop => {
+  props.forEach(function (prop) {
     if (t.isSpreadProperty(prop)) {
       handleSpreadProperty(prop.argument.node);
     } else {
@@ -49,30 +59,29 @@ function prefixStyle(t, path) {
   // track that we've autoprefixed this so we don't do it multiple times
   path.data.autoprefixed = true;
 
-  const { properties } = path.node.value.expression;
+  var properties = path.node.value.expression.properties;
   // get an object containing all the properties in this that are prefixed
-  const prefixed = properties ? autoprefix(propertiesToObject(t, properties)) : [];
+
+  var prefixed = properties ? (0, _autoprefix2.default)(propertiesToObject(t, properties)) : [];
 
   for (var key in prefixed) {
     // make sure the prefixed value produces valid CSS at all times.
-    const prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(`;${key}:`) : prefixed[key];
+    var prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(';' + key + ':') : prefixed[key];
 
     // push new prefixed properties
-    path.node.value.expression.properties.push(
-      t.objectProperty(
-        t.stringLiteral(key),
-        t.valueToNode(prefixedValue)
-      )
-    );
+    path.node.value.expression.properties.push(t.objectProperty(t.stringLiteral(key), t.valueToNode(prefixedValue)));
   }
 }
 
-export default ({ types }) => ({
-  visitor: {
-    JSXAttribute(path) {
-      if (path.node.name.name === 'style') {
-        prefixStyle(types, path);
+exports.default = function (_ref) {
+  var types = _ref.types;
+  return {
+    visitor: {
+      JSXAttribute: function JSXAttribute(path) {
+        if (path.node.name.name === 'style') {
+          prefixStyle(types, path);
+        }
       }
     }
-  }
-});
+  };
+};

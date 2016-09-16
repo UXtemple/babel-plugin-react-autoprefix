@@ -2,4 +2,4 @@
 
 IGNORE='node_modules/**,__tests__/**';
 
-./node_modules/.bin/babel $1 --extensions .es6 --ignore $IGNORE --out-dir . .
+./node_modules/.bin/babel --extensions .es6 --ignore $IGNORE --presets es2015 --out-dir . .
