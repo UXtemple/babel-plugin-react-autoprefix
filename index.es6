@@ -4,8 +4,6 @@ function propertiesToObject(t, props) {
   const keyedProps = {};
 
   function handleSpreadProperty(node) {
-    if (!node || !node.properties) return;
-
     node.properties.forEach(sprop => {
       if (t.isSpreadProperty(sprop)) {
         throw new Error('TODO: handle spread properties in spread properties');
@@ -16,7 +14,7 @@ function propertiesToObject(t, props) {
   }
 
   props.forEach(prop => {
-    if (t.isSpreadProperty(prop)) {
+    if (t.isSpreadProperty(prop) && prop.argument.node) {
       handleSpreadProperty(prop.argument.node);
     } else {
       // we don't process computed properties
@@ -37,11 +35,8 @@ function propertiesToObject(t, props) {
 }
 
 function prefixStyle(t, path) {
-  /* console.log(path.node.value) */
   // verify this is an object as it's the only type we take
   if (!t.isJSXExpressionContainer(path.node.value)) return;
-
-  // console.log('props', path.node.properties)
 
   // we've already prefixed this object
   if (path.data.autoprefixed) return;
@@ -53,10 +48,9 @@ function prefixStyle(t, path) {
   // get an object containing all the properties in this that are prefixed
   const prefixed = properties ? autoprefix(propertiesToObject(t, properties)) : [];
 
-  for (var key in prefixed) {
+  for (const key in prefixed) {
     // make sure the prefixed value produces valid CSS at all times.
     const prefixedValue = Array.isArray(prefixed[key]) ? prefixed[key].join(`;${key}:`) : prefixed[key];
-
     // push new prefixed properties
     path.node.value.expression.properties.push(
       t.objectProperty(
