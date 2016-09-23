@@ -26,9 +26,6 @@ function propertiesToObject(t, props) {
       // register property as one we'll try and autoprefix
       keyedProps[prop.key.name] = prop.value.value;
     }
-
-    // // remove property as it'll get added later again later
-    // prop.dangerouslyRemove();
   });
 
   return keyedProps;
@@ -47,6 +44,8 @@ function prefixStyle(t, path) {
   const { properties } = path.node.value.expression;
   // get an object containing all the properties in this that are prefixed
   const prefixed = properties ? autoprefix(propertiesToObject(t, properties)) : [];
+
+  path.node.value.expression.properties = []
 
   for (const key in prefixed) {
     // make sure the prefixed value produces valid CSS at all times.
