@@ -17,7 +17,7 @@ $ npm install babel-plugin-react-autoprefix
 
 **.babelrc**
 
-```json
+```js
 {
   "plugins": ["react-autoprefix"]
 }
@@ -37,6 +37,13 @@ require("babel-core").transform("code", {
 });
 ```
 
-# TODO
+## Changing the matching pattern
 
-- Refactor how we deal with `SpreadProperty` nodes.
+The plugin will match `style` props by default. If you want to match other props, like
+`styleSomething`, you can use the plugin's `matcher` option, e.g. in `.babelrc`:
+
+```js
+{
+  "plugins": ["react-autoprefix", { matcher: /^style.*$/ }]
+}
+```
