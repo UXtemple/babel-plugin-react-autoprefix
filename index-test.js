@@ -52,6 +52,10 @@ const FIXTURES = [{
   name: 'respect external variables',
   src: 'const HEIGHT = 50; <div style={{ height: HEIGHT }} />',
   out: `const HEIGHT=50;React.createElement("div",{style:{height:HEIGHT}});`
+}, {
+  name: 'respect hand-prefixed styles',
+  src: '<div style={{WebkitOverflowScrolling: "touch"}} />',
+  out: 'React.createElement("div",{style:{"WebkitOverflowScrolling":"touch"}});'
 }];
 
 FIXTURES.forEach(f => {

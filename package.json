@@ -25,6 +25,6 @@
     "styles"
   ],
   "dependencies": {
-    "autoprefix": "^0.1.2"
+    "autoprefix": "^1.0.0"
   }
 }
